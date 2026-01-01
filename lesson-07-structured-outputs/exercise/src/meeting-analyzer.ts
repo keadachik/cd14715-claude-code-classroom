@@ -82,12 +82,12 @@ For dates, convert relative dates (like "next Friday") to ISO format based on th
     prompt,
     options: {
       outputFormat: {
-        type: "json_schema",
+        type: "json_schema",  // use JSON Schema for structured output
         schema: MeetingAnalysisJSONSchema,
       },
     },
   })) {
-    if (message.type === "result" && message.structured_output) {
+    if (message.type === "result" && message.subtype === "success" && message.structured_output) {
       // Validate with Zod for type safety
       return MeetingAnalysisSchema.parse(message.structured_output);
     }
