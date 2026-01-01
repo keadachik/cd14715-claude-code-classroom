@@ -67,13 +67,14 @@ Extract:
   for await (const message of query({
     prompt,
     options: {
+      // use JSON Schema for structured output
       outputFormat: {
         type: "json_schema",
         schema: ProductReviewJSONSchema,
       },
     },
   })) {
-    if (message.type === "result" && message.structured_output) {
+    if (message.type === "result" && message.subtype === "success" && message.structured_output) {
       // Validate with Zod for type safety
       return ProductReviewSchema.parse(message.structured_output);
     }

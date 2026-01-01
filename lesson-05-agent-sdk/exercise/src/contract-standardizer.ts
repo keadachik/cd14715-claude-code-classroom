@@ -2,32 +2,40 @@
  * Contract Standardizer Agent
  *
  * Deliverable: standardizeContract() function using Claude Agent SDK
- * to extract key terms and format into standardized template.
+ * to read contract files, extract key terms, and write standardized output.
  */
 
 import { query } from "@anthropic-ai/claude-agent-sdk";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // -----------------------------------------------------------------------------
 // Exported Types
 // -----------------------------------------------------------------------------
 
 export interface StandardizedContract {
+  inputPath: string;
+  outputPath: string;
   raw: string;
 }
+
+// Output folder for standardized contracts
+export const STANDARDIZED_FOLDER = path.join(__dirname, "standardized");
 
 // -----------------------------------------------------------------------------
 // Prompt Function
 // -----------------------------------------------------------------------------
 
-const contractStandardizerPrompt = (contractText: string) => `You are a contract standardization expert.
+const contractStandardizerPrompt = (inputPath: string, outputPath: string) => `You are a contract standardization expert.
 
-When given contract text:
-1. Extract key contract elements
-2. Identify all parties, terms, and conditions
-3. Format into a standardized template
-4. Flag any missing or unclear terms
+TASK:
+1. Read the contract file at: ${inputPath}
+2. Extract key contract elements and format into standardized template
+3. Write the standardized output to: ${outputPath}
 
-Format your response as:
+STANDARDIZED FORMAT:
 
 ## Contract Summary
 
@@ -60,18 +68,26 @@ Format your response as:
 ### Risk Assessment
 - [Red flags or missing terms]
 
-Be thorough and extract all business-critical terms.
-
-The contract text is: ${contractText}`;
+INSTRUCTIONS:
+1. Use the Read tool to read the contract file
+2. Extract all business-critical terms
+3. Flag any missing or unclear terms in Risk Assessment
+4. Use the Write tool to save the standardized output
+5. Confirm the file was written successfully`;
 
 // -----------------------------------------------------------------------------
 // Exported Function: standardizeContract()
 // -----------------------------------------------------------------------------
 
-export async function standardizeContract(contractText: string): Promise<StandardizedContract> {
+export async function standardizeContract(
+  inputPath: string,
+  outputFilename: string
+): Promise<StandardizedContract> {
+  const outputPath = path.join(STANDARDIZED_FOLDER, outputFilename);
+
   const result = query({
-    prompt: contractStandardizerPrompt(contractText),
-    options: { allowedTools: [] },
+    prompt: contractStandardizerPrompt(inputPath, outputPath),
+    options: { allowedTools: ["Read", "Write"] },
   });
 
   let rawResult = "";
@@ -84,6 +100,8 @@ export async function standardizeContract(contractText: string): Promise<Standar
   }
 
   return {
+    inputPath,
+    outputPath,
     raw: rawResult,
   };
 }

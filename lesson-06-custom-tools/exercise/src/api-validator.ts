@@ -32,11 +32,11 @@ export interface ValidationResult {
 // -----------------------------------------------------------------------------
 
 const validateApiSchema = {
-  apiUrl: z.string().url().describe("The API endpoint URL to validate"),
+  apiUrl: z.url().describe("The API endpoint URL to validate"),
   method: z.enum(["GET", "POST", "PUT", "DELETE"]).describe("HTTP method"),
   expectedFields: z.array(z.string()).describe("Expected fields in response"),
   maxLatencyMs: z.number().positive().describe("SLA threshold in milliseconds"),
-  headers: z.record(z.string()).optional().describe("Optional headers for auth"),
+  headers: z.record(z.string(), z.string()).optional().describe("Optional headers for auth"),
   body: z.string().optional().describe("Optional request body for POST/PUT"),
 };
 
@@ -44,8 +44,8 @@ const validateApiSchema = {
 // Validation Logic
 // -----------------------------------------------------------------------------
 
-export async function validateApiResponse(
-  apiUrl: string,
+async function validateApiResponse(
+  apiUrl: URL,
   method: string,
   expectedFields: string[],
   maxLatencyMs: number,
@@ -157,11 +157,11 @@ export const apiValidatorServer = createSdkMcpServer({
       validateApiSchema,
       async (args): Promise<{ content: Array<{ type: "text"; text: string }> }> => {
         const result = await validateApiResponse(
-          args.apiUrl,
+          new URL(args.apiUrl as string),
           args.method,
           args.expectedFields,
           args.maxLatencyMs,
-          args.headers,
+          args.headers as Record<string, string>,
           args.body
         );
 

@@ -4,8 +4,8 @@
   "description": "Exercise: Build a contract standardization agent using the Claude Agent SDK that converts vendor contracts into a standardized template for legal review",
   "main": "src/contract-standardizer.ts",
   "scripts": {
-    "start": "npx tsx src/contract-standardizer.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "npx tsx src/index.ts",
+    "test": "npx tsx src/index.ts"
   },
   "keywords": [
     "claude",

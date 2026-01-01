@@ -4,15 +4,21 @@ Build an agent to standardize vendor contracts for legal review.
 
 ## Scenario
 
-Your procurement team receives contracts in wildly different formats. Your legal team spends hours reformatting them to compare terms. Build an agent that extracts key terms and formats them into a consistent structure.
+Your procurement team receives contracts in wildly different formats. Your legal team spends hours reformatting them to compare terms. Build an agent that reads contract files, extracts key terms, and writes standardized output files.
 
 ## Project Structure
 
 ```
 src/
+├── contracts/               # Input contract files
+│   ├── saas.txt
+│   ├── consulting.txt
+│   ├── vendor.txt
+│   └── email.txt
+├── standardized/            # Output (agent writes here)
 ├── contract-standardizer.ts # Exported function (deliverable)
-├── sample-contracts.ts      # 4 test contracts
-└── index.ts                 # Tests for the function
+├── sample-contracts.ts      # Contract file paths
+└── index.ts                 # Tests
 ```
 
 ## Setup
@@ -36,21 +42,23 @@ npm start
 
 ```typescript
 export interface StandardizedContract {
+  inputPath: string;
+  outputPath: string;
   raw: string;
 }
 
 export async function standardizeContract(
-  contractText: string
+  inputPath: string,
+  outputFilename: string
 ): Promise<StandardizedContract>
 ```
 
-## Tests (index.ts)
+## Agent Tools
 
-| Step | Description |
-|------|-------------|
-| 1 | Standardize SaaS agreement (well-structured) |
-| 2 | Standardize email proposal (sparse details) |
-| 3 | Test all 4 contract types |
+| Tool | Purpose |
+|------|---------|
+| Read | Read contract files from `contracts/` folder |
+| Write | Write standardized output to `standardized/` folder |
 
 ## Standardized Output Format
 
@@ -81,15 +89,15 @@ export async function standardizeContract(
 - [Red flags or missing terms]
 ```
 
-## 4 Test Contracts
+## Test Contracts
 
-| Type | Description |
-|------|-------------|
-| saas | Well-structured SaaS agreement |
-| consulting | Less formal consulting SOW |
-| vendor | Complex vendor MSA |
-| email | Minimal email proposal |
+| ID | File | Description |
+|----|------|-------------|
+| saas | saas.txt | Well-structured SaaS agreement |
+| consulting | consulting.txt | Less formal consulting SOW |
+| vendor | vendor.txt | Complex vendor MSA |
+| email | email.txt | Minimal email proposal |
 
 ## Key Takeaway
 
-Agent SDK enables building domain-specific document processors. Clear prompts with output templates ensure consistent results. For legal docs, focus on business-critical terms.
+Agent SDK enables file-based document processing. The agent reads input files, processes content, and writes output files autonomously using Read and Write tools.

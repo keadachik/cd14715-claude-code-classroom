@@ -75,29 +75,3 @@ export const taxToolServer = createSdkMcpServer({
     ),
   ],
 });
-
-// -----------------------------------------------------------------------------
-// Standalone calculation function (for testing without agent)
-// -----------------------------------------------------------------------------
-
-export function calculateTax(
-  amount: number,
-  taxRate: number,
-  roundToNearestCent: boolean = true
-): TaxResult {
-  let taxAmount = amount * taxRate;
-  let total = amount + taxAmount;
-
-  if (roundToNearestCent) {
-    taxAmount = Math.round(taxAmount * 100) / 100;
-    total = Math.round(total * 100) / 100;
-  }
-
-  return {
-    subtotal: amount,
-    tax: taxAmount,
-    total: total,
-    effectiveRate: taxRate,
-    currency: "USD",
-  };
-}

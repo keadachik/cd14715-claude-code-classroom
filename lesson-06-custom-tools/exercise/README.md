@@ -4,14 +4,14 @@ Build a custom tool that validates API responses and checks SLA compliance.
 
 ## Scenario
 
-Your engineering team needs to validate that API responses match expected schemas, measure latency, and detect breaking changes. This tool will be used in CI/CD pipelines.
+Your engineering team needs to validate that API responses match expected schemas, measure latency, and detect breaking changes. Build a custom MCP tool for API validation.
 
 ## Project Structure
 
 ```
 src/
 ├── api-validator.ts  # Exported tool (deliverable)
-└── index.ts          # Tests for the tool
+└── index.ts          # Test with agent
 ```
 
 ## Setup
@@ -50,16 +50,20 @@ export interface ValidationResult {
 }
 
 export const apiValidatorServer: SdkMcpServer;
-export async function validateApiResponse(...): Promise<ValidationResult>;
 ```
 
-## Tests (index.ts)
+## Tool Schema
 
-| Step | Description |
-|------|-------------|
-| 1 | Test validator directly with public API |
-| 2 | Use validator with agent via MCP server |
-| 3 | Test various scenarios (SLA, missing fields) |
+```typescript
+const validateApiSchema = {
+  apiUrl: z.url(),
+  method: z.enum(["GET", "POST", "PUT", "DELETE"]),
+  expectedFields: z.array(z.string()),
+  maxLatencyMs: z.number().positive(),
+  headers: z.record(z.string(), z.string()).optional(),
+  body: z.string().optional(),
+};
+```
 
 ## Validation Checks
 
@@ -70,12 +74,20 @@ export async function validateApiResponse(...): Promise<ValidationResult>;
 | Extra Fields | Warning for data leakage |
 | Latency | Compare against SLA threshold |
 
-## Test Scenarios
+## Usage with Agent
 
-1. Valid API response within SLA
-2. Missing expected field (breaking change)
-3. Strict SLA threshold exceeded
+```typescript
+for await (const message of query({
+  prompt: "Validate the API at ...",
+  options: {
+    mcpServers: {
+      "api-validator": apiValidatorServer,
+    },
+    allowedTools: ["mcp__api-validator__validate_api_response"],
+  },
+})) { ... }
+```
 
 ## Key Takeaway
 
-Custom validation tools provide detailed diagnostics. Clear error messages help engineers quickly identify issues. Tools integrated into CI/CD prevent breaking changes from reaching production.
+Custom tools extend agent capabilities with domain-specific logic. Use `createSdkMcpServer` and `tool()` helper to create MCP-compatible tools that agents can use.
