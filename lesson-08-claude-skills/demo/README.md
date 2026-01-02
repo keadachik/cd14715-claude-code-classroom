@@ -1,48 +1,10 @@
-# Email Etiquette Skill
+# Demo: Claude Skills - Email Etiquette
 
-Create a Claude Skill that encapsulates domain expertise for email review.
-
-## Overview
-
-In this demo, we'll create a Claude Skill that encapsulates domain expertise, store it in `.claude/skills/`, and show how agents invoke it using the Skill tool. Skills provide reusable, consistent expertise across your agent system.
+Build an agent that reviews emails using a Claude Skill.
 
 ## Scenario
 
-Your team reviews dozens of emails daily but lacks consistent quality standards. Some are too formal, some too casual. We'll create an "email-etiquette" skill that provides expertise on professional email communication.
-
-## What You'll Learn
-
-- What Claude Skills are (reusable expertise modules)
-- When to create a skill vs. inline prompts
-- SKILL.md structure and best practices
-- How agents invoke skills via the Skill tool
-- Organizing skills for maintainability
-
-## Prerequisites
-
-- Node.js 18+
-- Anthropic API Key
-- Completed Lesson 07 (Structured Outputs)
-
-## Installation
-
-```bash
-npm install
-```
-
-## Configuration
-
-Create a `.env` file:
-
-```bash
-ANTHROPIC_API_KEY=your-api-key-here
-```
-
-## Running the Demo
-
-```bash
-npm start
-```
+Your team reviews emails but lacks consistent quality standards. Build an agent that uses an email etiquette skill to analyze emails for tone, structure, and professionalism.
 
 ## Project Structure
 
@@ -51,87 +13,67 @@ demo/
 ├── .claude/
 │   └── skills/
 │       └── email-etiquette/
-│           └── SKILL.md
+│           └── SKILL.md        # Email review skill
 ├── src/
-│   └── index.ts
-├── package.json
+│   ├── email-reviewer.ts       # Exported function (deliverable)
+│   ├── sample-emails.ts        # Test emails
+│   └── index.ts                # Test
 └── README.md
 ```
 
-## Key Concepts
+## Setup
 
-### When to Use Skills
-
-**Use Skills when:**
-- Multiple agents need the same expertise
-- Knowledge is complex and detailed
-- You want consistency across agents
-- Expertise needs version control
-
-**Use inline prompts when:**
-- Agent-specific instructions
-- Simple, one-off guidance
-- Changing frequently
-
-### SKILL.md Structure
-
-```markdown
-# Email Etiquette Skill
-
-## Expertise
-Professional email communication for business contexts.
-
-## Capabilities
-- Assesses email tone (too casual, too formal, appropriate)
-- Identifies clarity and structure issues
-- Checks for common mistakes
-
-## Analysis Criteria
-
-### Tone Assessment
-**Too Casual:** Slang, emojis, fragments
-**Too Formal:** Legal language, jargon
-**Appropriate:** Clear, respectful, complete
-
-### Structure Checklist
-- [ ] Clear subject line
-- [ ] Appropriate greeting
-- [ ] Purpose in first 1-2 sentences
-- [ ] Professional sign-off
-
-## Output Format
-{
-  "tone": "appropriate" | "too-casual" | "too-formal",
-  "issues": [...],
-  "score": number,
-  "revisedEmail": string
-}
-
-## Examples
-[Include before/after examples]
+```bash
+npm install
 ```
 
-### Using Skills in an Agent
+Create `.env`:
+```
+ANTHROPIC_API_KEY=your-key-here
+```
+
+## Run
+
+```bash
+npm start
+```
+
+## Deliverable: email-reviewer.ts
 
 ```typescript
-const emailReviewer: AgentDefinition = {
-  name: 'email-reviewer',
-  description: 'Reviews emails for professionalism',
-  prompt: `Use the email-etiquette skill to analyze emails.`,
-  allowedTools: ['Skill'],
-  model: 'claude-sonnet-4-5-20250929'
-};
+export interface EmailReviewResult {
+  raw: string;
+}
 
-const result = await query(
-  'Review this email: "hey need that report thx"',
-  {
-    agents: [{ name: 'email-reviewer', definition: emailReviewer }],
-    allowedTools: ['Skill'],
-    settingSources: ['project']  // Loads .claude/skills/
-  }
-);
+export async function reviewEmail(
+  emailContent: string
+): Promise<EmailReviewResult>
 ```
+
+## Key Pattern: Using Skills with Agent SDK
+
+```typescript
+for await (const message of query({
+  prompt: reviewPrompt(emailContent),
+  options: {
+    cwd: PROJECT_ROOT,                    // Where .claude/skills/ lives
+    settingSources: ["project"],          // Load skills from filesystem
+    allowedTools: ["Skill", "Read", "Grep", "Glob"],
+  },
+})) { ... }
+```
+
+## Skill: email-etiquette
+
+The skill teaches the agent to check for:
+
+| Category | Issues |
+|----------|--------|
+| Tone | Too casual (slang, emojis), Too formal (archaic language) |
+| Structure | Missing greeting, unclear purpose, no sign-off |
+| Clarity | Vague requests, missing context |
+| Grammar | Typos, incomplete sentences |
 
 ## Key Takeaway
 
-Claude Skills encapsulate reusable domain expertise in `.claude/skills/[name]/SKILL.md` files. Skills provide consistent guidance across multiple agents. Use skills for complex, reusable knowledge. Agents access skills via the Skill tool automatically.
+Skills extend Claude with reusable expertise stored in `.claude/skills/`. Use `settingSources: ["project"]` to load skills and the `Skill` tool to apply them. Skills provide consistent analysis across agents.
