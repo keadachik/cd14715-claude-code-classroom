@@ -66,28 +66,62 @@ Your tasks:
 ### Prerequisites
 
 - Node.js 18+
-- [Anthropic API Key](https://console.anthropic.com/)
-- [GitHub Personal Access Token](https://github.com/settings/tokens) (scopes: `repo`, `read:org`)
+- **AWS Bedrock Access** (recommended - credentials provided by Udacity) OR [Anthropic API Key](https://console.anthropic.com/)
+- [GitHub Personal Access Token](https://github.com/settings/tokens) (recommended for private repos - scopes: `repo`, `read:org`)
 
 ### Installation
 
+**In Vocareum Workspace (Recommended):**
 ```bash
-# Install dependencies (from repo root for shared node_modules)
+# Install dependencies from repository root (uses npm workspaces)
+cd /path/to/repository-root
+npm install
+
+# Copy environment template
+cd project/starter
+cp .env.example .env
+
+# Edit .env with your AWS credentials from Vocareum
+```
+
+**Local Setup (Alternative):**
+```bash
+# If you cloned only the starter folder
+cd project/starter
 npm install
 
 # Copy environment template
 cp .env.example .env
 
-# Edit .env with your API keys
+# Edit .env with your authentication credentials
 ```
 
 ### Configuration
 
-Edit `.env`:
+Edit `.env` with **ONE** authentication method:
+
+**Method 1: AWS Bedrock (Recommended)**
+```bash
+AWS_REGION=us-east-1
+AWS_ACCESS_KEY_ID=your-access-key-id
+AWS_SECRET_ACCESS_KEY=your-secret-access-key
+CLAUDE_CODE_USE_BEDROCK=1
+ANTHROPIC_MODEL=us.anthropic.claude-sonnet-4-5-20250929-v1:0
+```
+
+**Method 2: Anthropic API (Optional)**
 ```bash
 ANTHROPIC_API_KEY=sk-ant-...
-GITHUB_PERSONAL_ACCESS_TOKEN=ghp_...
+ANTHROPIC_MODEL=claude-sonnet-4-5-20250929
+```
 
+**Both methods also need:**
+```bash
+# Optional - for higher rate limits and private repos
+# GITHUB_TOKEN=ghp_...
+
+# Required - absolute path to project directory
+PROJECT_ROOT=/absolute/path/to/project/starter
 ```
 
 ### Running
