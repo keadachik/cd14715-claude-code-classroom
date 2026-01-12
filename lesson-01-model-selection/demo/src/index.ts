@@ -8,15 +8,22 @@
  */
 
 import Anthropic from "@anthropic-ai/sdk";
+import AnthropicBedrock from "@anthropic-ai/bedrock-sdk";
 import { MODELS, ModelKey } from "./models.js";
 import { ALERTS } from "./sample-alerts.js";
 
 import dotenv from "dotenv";
 dotenv.config();
 
-// Initialize the Anthropic client
-const client = new Anthropic({
+// Initialize the Anthropic client -- if not using Bedrock
+const anthropicClient = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
+});
+
+
+// Initialize the Anthropic client -- if using Bedrock
+const client = new AnthropicBedrock({
+  awsRegion: process.env.AWS_REGION,
 });
 
 // -----------------------------------------------------------------------------
