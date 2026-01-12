@@ -8,6 +8,11 @@ import "dotenv/config";
 import { query } from "@anthropic-ai/claude-agent-sdk";
 import { apiValidatorServer } from "./api-validator.js";
 
+const model = process.env.ANTHROPIC_MODEL;
+if (!model) {
+  throw new Error("ANTHROPIC_MODEL is not set");
+}
+
 // -----------------------------------------------------------------------------
 // Use tool with agent via MCP server
 // -----------------------------------------------------------------------------
@@ -20,6 +25,7 @@ async function useWithAgent() {
       mcpServers: {
         "api-validator": apiValidatorServer,
       },
+      model,
       allowedTools: ["mcp__api-validator__validate_api_response", "WebFetch"],
     },
   })) {

@@ -10,6 +10,11 @@ import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 import { query } from "@anthropic-ai/claude-agent-sdk";
 
+const model = process.env.ANTHROPIC_MODEL;
+if (!model) {
+  throw new Error("ANTHROPIC_MODEL is not set");
+}
+
 // -----------------------------------------------------------------------------
 // Exported Types
 // -----------------------------------------------------------------------------
@@ -72,7 +77,7 @@ When asked to research a company, gather:
 
 Focus on information relevant to B2B software sales.`,
     tools: ["WebSearch"],
-    model: "sonnet",
+    model,
   },
 
   "competitive-analyzer": {
@@ -87,7 +92,7 @@ When given company information, analyze:
 
 Focus on strategic positioning for sales conversations.`,
     tools: [],
-    model: "sonnet",
+    model,
   },
 
   "qualification-scorer": {
@@ -107,7 +112,7 @@ RULES:
 - No clear pain points = Nurture
 - Using competitor = Highlight switching ROI`,
     tools: [],
-    model: "sonnet",
+    model,
   },
 };
 
@@ -155,6 +160,7 @@ Return the briefing as structured JSON.`;
     options: {
       allowedTools: ["Task"],
       agents: subagents,
+      model,
       outputFormat: {
         type: "json_schema",
         schema: SalesBriefingJSONSchema,

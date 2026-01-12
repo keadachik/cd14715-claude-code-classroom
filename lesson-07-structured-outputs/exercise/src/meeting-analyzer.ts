@@ -10,6 +10,11 @@ import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 import { query } from "@anthropic-ai/claude-agent-sdk";
 
+const model = process.env.ANTHROPIC_MODEL;
+if (!model) {
+  throw new Error("ANTHROPIC_MODEL is not set");
+}
+
 // -----------------------------------------------------------------------------
 // Exported Types
 // -----------------------------------------------------------------------------
@@ -81,6 +86,7 @@ For dates, convert relative dates (like "next Friday") to ISO format based on th
   for await (const message of query({
     prompt,
     options: {
+      model,
       outputFormat: {
         type: "json_schema",  // use JSON Schema for structured output
         schema: MeetingAnalysisJSONSchema,

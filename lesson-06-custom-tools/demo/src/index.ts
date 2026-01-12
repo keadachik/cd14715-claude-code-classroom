@@ -8,6 +8,10 @@ import "dotenv/config";
 import { query } from "@anthropic-ai/claude-agent-sdk";
 import { taxToolServer } from "./tax-calculator.js";
 
+const model = process.env.ANTHROPIC_MODEL;
+if (!model) {
+  throw new Error("ANTHROPIC_MODEL is not set");
+}
 
 // -----------------------------------------------------------------------------
 //  Use tool with agent via MCP server
@@ -20,6 +24,7 @@ async function useWithAgent() {
       mcpServers: {
         "financial-tools": taxToolServer,
       },
+      model,
       allowedTools: ["mcp__financial-tools__calculate_tax"]
     },
   })) {

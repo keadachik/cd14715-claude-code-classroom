@@ -5,7 +5,13 @@
  * to read files and produce structured summaries.
  */
 
+import "dotenv/config";
 import { query } from "@anthropic-ai/claude-agent-sdk";
+
+const model = process.env.ANTHROPIC_MODEL;
+if (!model) {
+  throw new Error("ANTHROPIC_MODEL is not set");
+}
 
 // -----------------------------------------------------------------------------
 // Exported Types
@@ -50,7 +56,7 @@ The document path is: ${filePath}`;
 export async function summarizeDocument(filePath: string): Promise<DocumentSummary> {
   const result = query({
     prompt: documentSummarizerPrompt(filePath),
-    options: { allowedTools: ["Read"] },
+    options: { model, allowedTools: ["Read"] },
   });
 
   let rawResult = "";

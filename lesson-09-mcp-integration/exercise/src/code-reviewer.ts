@@ -11,6 +11,11 @@ import { zodToJsonSchema } from "zod-to-json-schema";
 import { query } from "@anthropic-ai/claude-agent-sdk";
 import { eslintTools, mcpServersConfig } from "./config/mcp.config";
 
+const model = process.env.ANTHROPIC_MODEL;
+if (!model) {
+  throw new Error("ANTHROPIC_MODEL is not set");
+}
+
 // -----------------------------------------------------------------------------
 // Exported Types
 // -----------------------------------------------------------------------------
@@ -103,6 +108,7 @@ Return the complete quality report in the structured JSON format.`;
     prompt,
     options: {
       mcpServers: mcpServersConfig,
+      model,
       allowedTools: [...eslintTools, 'Read'],
     },
   })) {

@@ -11,6 +11,9 @@ import Anthropic from "@anthropic-ai/sdk";
 import { MODELS, ModelKey } from "./models.js";
 import { ALERTS } from "./sample-alerts.js";
 
+import dotenv from "dotenv";
+dotenv.config();
+
 // Initialize the Anthropic client
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,

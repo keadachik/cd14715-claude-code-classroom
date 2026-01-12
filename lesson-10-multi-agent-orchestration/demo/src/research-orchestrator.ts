@@ -7,6 +7,11 @@
 import "dotenv/config";
 import { query } from "@anthropic-ai/claude-agent-sdk";
 
+const model = process.env.ANTHROPIC_MODEL;
+if (!model) {
+  throw new Error("ANTHROPIC_MODEL is not set");
+}
+
 // -----------------------------------------------------------------------------
 // Exported Types
 // -----------------------------------------------------------------------------
@@ -32,7 +37,7 @@ When asked to research a topic:
 
 Focus on credible, recent sources. Be thorough but concise.`,
     tools: ["WebSearch"],
-    model: "sonnet",
+    model,
   },
 
   analyzer: {
@@ -47,7 +52,7 @@ When given research findings:
 
 Provide analytical depth, not just summaries.`,
     tools: [],
-    model: "sonnet",
+    model,
   },
 
   summarizer: {
@@ -61,7 +66,7 @@ When given research and analysis:
 
 Be concise but comprehensive.`,
     tools: [],
-    model: "haiku",
+    model,
   },
 };
 
@@ -98,6 +103,7 @@ Begin now.`;
     options: {
       allowedTools: ["Task"],
       agents: subagents,
+      model,
       maxTurns: 15,
     },
   })) {

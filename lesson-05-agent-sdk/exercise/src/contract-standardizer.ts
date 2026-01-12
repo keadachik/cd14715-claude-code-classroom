@@ -5,11 +5,17 @@
  * to read contract files, extract key terms, and write standardized output.
  */
 
+import "dotenv/config";
 import { query } from "@anthropic-ai/claude-agent-sdk";
 import path from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const model = process.env.ANTHROPIC_MODEL;
+if (!model) {
+  throw new Error("ANTHROPIC_MODEL is not set");
+}
 
 // -----------------------------------------------------------------------------
 // Exported Types
@@ -87,7 +93,7 @@ export async function standardizeContract(
 
   const result = query({
     prompt: contractStandardizerPrompt(inputPath, outputPath),
-    options: { allowedTools: ["Read", "Write"] },
+    options: { model, allowedTools: ["Read", "Write"] },
   });
 
   let rawResult = "";

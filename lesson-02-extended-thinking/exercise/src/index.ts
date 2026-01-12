@@ -7,12 +7,18 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { TRANSACTIONS, Transaction } from "./sample-transactions.js";
 import { analyzeFraudRisk, FraudAnalysis } from "./fraud-analyzer.js";
+import { Model } from "@anthropic-ai/sdk/resources";
+import dotenv from "dotenv";
+dotenv.config();
 
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
-const model = "claude-sonnet-4-5-20250929";
+const model = process.env.ANTHROPIC_MODEL;
+if (!model) {
+  throw new Error("ANTHROPIC_MODEL is not set");
+}
 
 // -----------------------------------------------------------------------------
 // Step 1: Analyze WITHOUT extended thinking (baseline comparison)
@@ -25,7 +31,7 @@ async function step1_withoutThinking() {
   console.log(`Transaction: ${t.id} - $${t.amount} at ${t.merchant}\n`);
 
   const response = await client.messages.create({
-    model,
+    model: model as Model,
     max_tokens: 1024,
     messages: [
       {

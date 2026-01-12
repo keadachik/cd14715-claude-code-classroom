@@ -7,12 +7,18 @@
 
 import Anthropic from "@anthropic-ai/sdk";
 import { Transaction } from "./sample-transactions.js";
+import dotenv from "dotenv";
+import { Model } from "@anthropic-ai/sdk/resources";
+dotenv.config();
 
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
-const model = "claude-sonnet-4-5-20250929";
+const model = process.env.ANTHROPIC_MODEL;
+if (!model) {
+  throw new Error("ANTHROPIC_MODEL is not set");
+}
 
 // -----------------------------------------------------------------------------
 // Exported Types
@@ -32,7 +38,7 @@ export interface FraudAnalysis {
 
 export async function analyzeFraudRisk(transaction: Transaction): Promise<FraudAnalysis> {
   const response = await client.messages.create({
-    model,
+    model: model as Model,
     max_tokens: 16000,
     thinking: {
       type: "enabled",

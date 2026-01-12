@@ -5,11 +5,17 @@
  * with the email-etiquette skill loaded from .claude/skills/
  */
 
+import "dotenv/config";
 import { query } from "@anthropic-ai/claude-agent-sdk";
 import path from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const model = process.env.ANTHROPIC_MODEL;
+if (!model) {
+  throw new Error("ANTHROPIC_MODEL is not set");
+}
 
 // Project root where .claude/skills/ is located
 const PROJECT_ROOT = path.resolve(__dirname, "..");
@@ -54,6 +60,7 @@ export async function reviewEmail(emailContent: string): Promise<EmailReviewResu
     options: {
       cwd: PROJECT_ROOT,
       settingSources: ["project"],
+      model,
       allowedTools: ["Skill", "Read", "Grep", "Glob"],
     },
   })) {

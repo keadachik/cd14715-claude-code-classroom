@@ -10,6 +10,11 @@ import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 import { query } from "@anthropic-ai/claude-agent-sdk";
 
+const model = process.env.ANTHROPIC_MODEL;
+if (!model) {
+  throw new Error("ANTHROPIC_MODEL is not set");
+}
+
 // -----------------------------------------------------------------------------
 // Exported Types
 // -----------------------------------------------------------------------------
@@ -67,6 +72,7 @@ Extract:
   for await (const message of query({
     prompt,
     options: {
+      model,
       // use JSON Schema for structured output
       outputFormat: {
         type: "json_schema",

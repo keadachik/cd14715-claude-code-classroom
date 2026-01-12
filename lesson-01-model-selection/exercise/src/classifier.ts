@@ -10,11 +10,15 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { MODELS, ModelKey } from "./models.js";
 import { TICKETS } from "./sample-tickets.js";
+import { Model } from "@anthropic-ai/sdk/resources";
+import dotenv from "dotenv";
+dotenv.config();
 
 // Initialize the Anthropic client
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
+
 
 // -----------------------------------------------------------------------------
 // Helper: Call Claude and return the response with usage stats
@@ -26,7 +30,7 @@ async function callClaude(modelKey: ModelKey, system: string, userMessage: strin
   const start = Date.now();
 
   const response = await client.messages.create({
-    model: model.id,
+    model: model.id as Model,
     max_tokens: 4096,
     system,
     messages: [{ role: "user", content: userMessage }],

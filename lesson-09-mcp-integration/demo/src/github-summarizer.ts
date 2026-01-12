@@ -5,8 +5,14 @@
  * with GitHub MCP server to fetch and summarize files from public repos.
  */
 
+import "dotenv/config";
 import { query } from "@anthropic-ai/claude-agent-sdk";
 import { githubMcpServer, githubTools } from "./config/mcp.config.js";
+
+const model = process.env.ANTHROPIC_MODEL;
+if (!model) {
+  throw new Error("ANTHROPIC_MODEL is not set");
+}
 
 // -----------------------------------------------------------------------------
 // Exported Types
@@ -54,6 +60,7 @@ export async function summarizeGitHubFile(
       mcpServers: {
         github: githubMcpServer,
       },
+      model,
       allowedTools: githubTools,
     },
   })) {
