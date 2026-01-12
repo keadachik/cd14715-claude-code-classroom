@@ -27,6 +27,7 @@ A product review analyzer needs to extract sentiment, rating, key points, and pu
 ## Installation
 
 ```bash
+# From repo root (shared node_modules)
 npm install
 ```
 

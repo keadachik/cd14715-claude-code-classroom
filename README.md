@@ -35,3 +35,23 @@ Each `lesson` folder contains an `exercises` folder. This `exercises` folder sho
 ### Project Folder
 
 The `project` folder should contain all files and instructions necessary for setup. If possible, a set of instructions should be provided for both Udacity workspaces and a way to work locally (for both MacOS and Windows OS). At a minimum, one set of instructions should be provided. A `README` template has been provided in the project folder. This template layout should be used to write your README.
+
+## Shared Dependencies (Single node_modules)
+
+This repo uses npm workspaces so demos and exercises can share one `node_modules` at the repo root.
+
+```bash
+# Install everything
+npm install
+
+# Or install only one demo/exercise
+npm install --workspace lesson-10-multi-agent-orchestration/demo
+```
+
+Run a specific demo/exercise from the repo root:
+
+```bash
+npm run --workspace lesson-10-multi-agent-orchestration/demo start
+```
+
+You can also `cd` into a demo/exercise folder and run `npm start` after the root install.

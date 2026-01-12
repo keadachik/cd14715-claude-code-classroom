@@ -1,0 +1,23 @@
+{
+  "name": "cd14715-claude-code-classroom",
+  "private": true,
+  "workspaces": [
+    "lesson-01-model-selection/demo",
+    "lesson-01-model-selection/exercise",
+    "lesson-02-extended-thinking/demo",
+    "lesson-02-extended-thinking/exercise",
+    "lesson-05-agent-sdk/demo",
+    "lesson-05-agent-sdk/exercise",
+    "lesson-06-custom-tools/demo",
+    "lesson-06-custom-tools/exercise",
+    "lesson-07-structured-outputs/demo",
+    "lesson-07-structured-outputs/exercise",
+    "lesson-08-claude-skills/demo",
+    "lesson-08-claude-skills/exercise",
+    "lesson-09-mcp-integration/demo",
+    "lesson-09-mcp-integration/exercise",
+    "lesson-10-multi-agent-orchestration/demo",
+    "lesson-10-multi-agent-orchestration/exercise",
+    "project/starter"
+  ]
+}

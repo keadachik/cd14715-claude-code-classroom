@@ -72,7 +72,7 @@ Your tasks:
 ### Installation
 
 ```bash
-# Install dependencies
+# Install dependencies (from repo root for shared node_modules)
 npm install
 
 # Copy environment template

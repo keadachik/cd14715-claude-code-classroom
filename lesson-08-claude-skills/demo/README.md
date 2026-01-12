@@ -24,6 +24,7 @@ demo/
 ## Setup
 
 ```bash
+# From repo root (shared node_modules)
 npm install
 ```
 
