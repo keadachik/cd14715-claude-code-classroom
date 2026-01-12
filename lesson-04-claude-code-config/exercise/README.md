@@ -18,7 +18,7 @@ You're joining a team that uses Claude Code for development automation. Your tas
 
 ## Tasks
 
-### 1. Install Claude Code
+### 1. Install Claude Code & Set up Authentication
 
 ```bash
 # Install globally
@@ -26,10 +26,26 @@ npm install -g @anthropic-ai/claude-code
 
 # Verify installation
 claude --version
+```
 
-# Set up API key
+Choose **one** authentication method:
+
+**Option A: AWS Bedrock (Recommended for Vocareum)**
+```bash
+export AWS_REGION=us-east-1
+export AWS_ACCESS_KEY_ID=your-access-key-id
+export AWS_SECRET_ACCESS_KEY=your-secret-access-key
+export AWS_SESSION_TOKEN=your-session-token
+export CLAUDE_CODE_USE_BEDROCK=1
+```
+
+**Option B: Direct Anthropic API**
+```bash
 export ANTHROPIC_API_KEY=your-api-key-here
+```
 
+Then test:
+```bash
 # Test with simple command
 claude "hello"
 ```

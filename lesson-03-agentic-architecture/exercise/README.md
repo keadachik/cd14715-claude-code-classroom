@@ -2,6 +2,40 @@
 
 Design a multi-agent architecture for an intelligent customer support system.
 
+## Setup
+
+```bash
+# From repo root (shared node_modules)
+npm install
+```
+
+## Authentication Setup
+
+Choose **one** authentication method:
+
+### Option 1: AWS Bedrock (Recommended for Vocareum)
+
+Create `.env`:
+```
+AWS_REGION=us-east-1
+AWS_ACCESS_KEY_ID=your-access-key-id
+AWS_SECRET_ACCESS_KEY=your-secret-access-key
+AWS_SESSION_TOKEN=your-session-token
+CLAUDE_CODE_USE_BEDROCK=1
+ANTHROPIC_MODEL=us.anthropic.claude-sonnet-4-5-20250929-v1:0
+```
+
+Copy AWS credentials from your Vocareum workspace.
+
+### Option 2: Direct Anthropic API
+
+Create `.env`:
+```
+ANTHROPIC_API_KEY=your-key-here
+```
+
+Get your API key from https://console.anthropic.com
+
 ## Overview
 
 Design a system that triages tickets, routes to appropriate teams, suggests solutions from knowledge base, and escalates complex issues.
@@ -86,3 +120,4 @@ Choose Option A or B based on:
 ## Key Takeaway
 
 Enterprise systems require architecture that balances speed, accuracy, and cost. Multi-agent systems excel at high-volume, complex workflows where different ticket types need specialized handling.
+

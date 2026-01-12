@@ -21,7 +21,6 @@ A product review analyzer needs to extract sentiment, rating, key points, and pu
 ## Prerequisites
 
 - Node.js 18+
-- Anthropic API Key
 - Completed Lesson 06 (Custom Tools)
 
 ## Installation
@@ -31,13 +30,32 @@ A product review analyzer needs to extract sentiment, rating, key points, and pu
 npm install
 ```
 
-## Configuration
+## Authentication Setup
 
-Create a `.env` file:
+Choose **one** authentication method:
 
-```bash
+### Option 1: AWS Bedrock (Recommended for Vocareum)
+
+Create `.env`:
+```
+AWS_REGION=us-east-1
+AWS_ACCESS_KEY_ID=your-access-key-id
+AWS_SECRET_ACCESS_KEY=your-secret-access-key
+AWS_SESSION_TOKEN=your-session-token
+CLAUDE_CODE_USE_BEDROCK=1
+ANTHROPIC_MODEL=us.anthropic.claude-sonnet-4-5-20250929-v1:0
+```
+
+Copy AWS credentials from your Vocareum workspace.
+
+### Option 2: Direct Anthropic API
+
+Create `.env`:
+```
 ANTHROPIC_API_KEY=your-api-key-here
 ```
+
+Get your API key from https://console.anthropic.com
 
 ## Running the Demo
 
@@ -145,3 +163,4 @@ const rating = review.rating; // Guaranteed number 1-5
 ## Key Takeaway
 
 Structured outputs with Zod schemas provide reliability, type safety, and automatic validation. Define your desired output structure as a Zod schema, convert to JSON Schema, and use `outputFormat` in `query()`. The agent will return data in exactly the format you specified.
+

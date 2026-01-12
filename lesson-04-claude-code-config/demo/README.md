@@ -65,6 +65,30 @@ claude "Review the code in src/example.ts"
 3. Claude automatically loads `.claude/CLAUDE.md`
 4. Chat with Claude in sidebar
 
+## Authentication Setup
+
+Choose **one** authentication method:
+
+### Option 1: AWS Bedrock (Recommended for Vocareum)
+
+```bash
+export AWS_REGION=us-east-1
+export AWS_ACCESS_KEY_ID=your-access-key-id
+export AWS_SECRET_ACCESS_KEY=your-secret-access-key
+export AWS_SESSION_TOKEN=your-session-token
+export CLAUDE_CODE_USE_BEDROCK=1
+```
+
+Copy AWS credentials from your Vocareum workspace.
+
+### Option 2: Direct Anthropic API
+
+```bash
+export ANTHROPIC_API_KEY=your-api-key-here
+```
+
+Get your API key from https://console.anthropic.com
+
 ## Testing the Configuration
 
 From this project directory:
