@@ -1,4 +1,10 @@
-import { ReviewReport } from './types/report-types';
+import { ReviewReport, ReviewReportSchema, ReviewReportJSONSchema } from './types/report-types.js';
+import { query } from '@anthropic-ai/claude-agent-sdk';
+import { orchestratorPrompt } from './prompts/index.js';
+import { mcpServersConfig } from './config/mcp.config.js';
+import { codeQualityAnalyzer } from './agents/code-quality-analyzer.js';
+import { testCoverageAnalyzer } from './agents/test-coverage-analyzer.js';
+import { refactoringSuggester } from './agents/refactoring-suggester.js';
 
 /**
  * Orchestrator configuration options
@@ -28,6 +34,57 @@ export class CodeReviewOrchestrator {
     repo: string,
     prNumber: number
   ): Promise<ReviewReport> {
-    throw new Error('Not implemented');
+    // 1. Validate the model
+    const model = process.env.ANTHROPIC_MODEL;
+    if (!model) {
+      throw new Error('ANTHROPIC_MODEL is not set');
+    }
+
+    // 2. Define subagent as a Record type
+    const subagents = {
+      'code-quality-analyzer': codeQualityAnalyzer,
+      'test-coverage-analyzer': testCoverageAnalyzer,
+      'refactoring-suggester': refactoringSuggester
+    };
+
+    // 3. Use structured outputs to define the output format
+    const result = query({
+      prompt: orchestratorPrompt(owner, repo, prNumber),
+      options: {
+        model,
+        agents: subagents,
+        allowedTools: [
+          'Task',
+          'mcp__github__get_pull_request',
+          'mcp__github__list_pull_request_files',
+          'mcp__eslint__lint',
+          'Read',
+          'Grep',
+          'Glob'
+        ],
+        mcpServers: mcpServersConfig,
+        outputFormat: {
+          type: 'json_schema',
+          schema: ReviewReportJSONSchema as any,
+        },
+        maxTurns: 20,
+      }
+    });
+
+    // 4. Get structured output and validate with Zod schema
+    for await (const message of result) {
+      if (message.type === 'result' &&
+        message.subtype === 'success' &&
+        message.structured_output) {
+        const parseResult = ReviewReportSchema.safeParse(message.structured_output);
+        if (parseResult.success) {
+          return parseResult.data;
+        } else {
+          throw new Error(`Schema validation failed: ${parseResult.error.message}`);
+        }
+      }
+    }
+
+    throw new Error('Failed to get structured output from orchestrator');
   }
 }
