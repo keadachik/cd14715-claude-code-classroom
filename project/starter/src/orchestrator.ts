@@ -5,6 +5,10 @@ import { mcpServersConfig } from './config/mcp.config.js';
 import { codeQualityAnalyzer } from './agents/code-quality-analyzer.js';
 import { testCoverageAnalyzer } from './agents/test-coverage-analyzer.js';
 import { refactoringSuggester } from './agents/refactoring-suggester.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 /**
  * Orchestrator configuration options
@@ -12,6 +16,9 @@ import { refactoringSuggester } from './agents/refactoring-suggester.js';
 export interface OrchestratorOptions {
 }
 
+// Lesson 08: Claude Skills で学ぶ設定
+// .claude/skills/ ディレクトリの場所を指定
+const PROJECT_ROOT = process.env.PROJECT_ROOT || path.resolve(__dirname, '../..');
 /**
  * Main Code Review Orchestrator
  * Coordinates subagents to analyze pull requests and generate comprehensive reports
@@ -51,6 +58,8 @@ export class CodeReviewOrchestrator {
     const result = query({
       prompt: orchestratorPrompt(owner, repo, prNumber),
       options: {
+        cwd: PROJECT_ROOT,
+        settingSources: ['project'],
         model,
         agents: subagents,
         allowedTools: [
@@ -60,7 +69,8 @@ export class CodeReviewOrchestrator {
           'mcp__eslint__lint',
           'Read',
           'Grep',
-          'Glob'
+          'Glob',
+          'Skill' // Lesson 08: Claude Skills を使用するために必要
         ],
         mcpServers: mcpServersConfig,
         outputFormat: {
