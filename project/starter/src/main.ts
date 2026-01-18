@@ -1,5 +1,6 @@
 import * as dotenv from 'dotenv';
 import { writeFile, mkdir } from 'fs/promises';
+import { execSync } from 'child_process';
 import { ReportGenerator } from './utils/report-generator';
 import { CodeReviewOrchestrator } from './orchestrator';
 
@@ -75,12 +76,25 @@ async function main() {
   }
 
   try {
+    // Get file count from PR for dynamic maxTurns calculation
+    let fileCount = 8; // Default assumption
+    try {
+      const ghOutput = execSync(
+        `gh pr view ${prNumber} --repo ${owner}/${repo} --json files --jq '.files | length'`,
+        { encoding: 'utf-8', timeout: 10000 }
+      ).trim();
+      fileCount = parseInt(ghOutput, 10) || 8;
+      console.log(`📁 PR has ${fileCount} changed files`);
+    } catch (ghError) {
+      console.warn(`⚠️  Could not get file count via gh CLI, using default: ${fileCount}`);
+    }
+
     // TODO: Create orchestrator instance
     // TODO: Call .reviewPullRequest(owner, repo, prNumber);
     // TODO: Generate formatted reports using ReportGenerator
     // Hint: Use ReportGenerator to create Markdown, HTML, and JSON reports
     // Save reports to 'reports/' directory with appropriate filenames
-    const orchestrator = new CodeReviewOrchestrator();
+    const orchestrator = new CodeReviewOrchestrator({ fileCount });
     const report = await orchestrator.reviewPullRequest(owner, repo, prNumber);
 
     // Generate formatted reports using ReportGenerator

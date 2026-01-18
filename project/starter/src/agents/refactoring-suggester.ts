@@ -5,5 +5,5 @@ export const refactoringSuggester: AgentDefinition = {
     description: 'Identifies opportunities to improve code structure, modernize patterns, and apply design principles. Suggests extract method/class candidates and dead code removal.',
     prompt: REF_SUGGESTER_PROMPT,
     model: 'inherit',
-    tools: ['Read', 'Grep', 'Glob'],
+    tools: ['Read', 'Skill'],
 };

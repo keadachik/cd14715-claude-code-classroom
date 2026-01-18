@@ -5,5 +5,5 @@ export const testCoverageAnalyzer: AgentDefinition = {
     description: 'Evaluates test completeness and suggests specific test cases. Identifies untested code paths and prioritizes critical test scenarios.',
     prompt: TEST_COVERAGE_ANALYZER_PROMPT,
     model: 'inherit',
-    tools: ['Read', 'Grep', 'Glob'],
+    tools: ['Read', 'Skill'],
 };
