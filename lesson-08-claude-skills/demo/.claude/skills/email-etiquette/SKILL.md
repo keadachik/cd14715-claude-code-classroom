@@ -1,3 +1,9 @@
+---
+name: email-etiquette
+description: Analyzes email tone, structure, and professionalism. Use when reviewing emails, checking business communication, or evaluating message clarity.
+---
+
+
 # Email Etiquette Skill
 
 ## Expertise

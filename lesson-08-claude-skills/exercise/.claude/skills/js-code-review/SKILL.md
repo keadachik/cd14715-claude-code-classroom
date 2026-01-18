@@ -1,3 +1,8 @@
+---
+name: js-code-review
+description: Reviews JavaScript and TypeScript code for quality,bugs, and security issues. Use when analyizing JavaScript/TypeSript files, checking code quality, identifying potential bugs, reviewing security vulnerabilities, or recommending best practices for modern ES6+ codebases.
+---
+
 # JavaScript Code Review Skill
 
 ## Expertise
