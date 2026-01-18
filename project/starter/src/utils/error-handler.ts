@@ -76,7 +76,19 @@ export async function withRetry<T>(
   // - Use setTimeout wrapped in Promise for delay
   // - Throw ReviewError with ErrorCodes.RETRY_EXHAUSTED if all retries fail
 
-  throw new Error('Not implemented');
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      if (attempt === maxRetries) {
+        throw error;
+      }
+      const backoffDelay = delayMs * Math.pow(2, attempt - 1);
+      const jitter = Math.random() * 100;
+      await new Promise(resolve => setTimeout(resolve, backoffDelay + jitter));
+    }
+  }
+  throw new ReviewError('All retries exhausted', ErrorCodes.RETRY_EXHAUSTED, { maxRetries, delayMs });
 }
 
 /**
@@ -102,8 +114,10 @@ export async function withTimeout<T>(
   // - The timeout promise should reject after timeoutMs milliseconds
   // - Throw ReviewError with ErrorCodes.AGENT_TIMEOUT on timeout
   // - Include timeoutMs in metadata
-
-  throw new Error('Not implemented');
+  return Promise.race([
+    fn(),
+    new Promise<T>((_, reject) => setTimeout(() => reject(new ReviewError(errorMessage, ErrorCodes.AGENT_TIMEOUT, { timeoutMs })), timeoutMs))
+  ])
 }
 
 /**

@@ -1,4 +1,5 @@
-import { ReviewReport, ReviewReportSchema, ReviewReportJSONSchema } from './types/report-types.js';
+import { ReviewReport, ReviewReportSchema } from './types/report-types.js';
+import { zodToJsonSchema } from 'zod-to-json-schema';
 import { query } from '@anthropic-ai/claude-agent-sdk';
 import { orchestratorPrompt } from './prompts/index.js';
 import { mcpServersConfig } from './config/mcp.config.js';
@@ -54,6 +55,11 @@ export class CodeReviewOrchestrator {
       'refactoring-suggester': refactoringSuggester
     };
 
+    // Convert Zod schema to JSON Schema
+    const jsonSchema = zodToJsonSchema(ReviewReportSchema as any, {
+      $refStrategy: 'root'
+    });
+
     // 3. Use structured outputs to define the output format
     const result = query({
       prompt: orchestratorPrompt(owner, repo, prNumber),
@@ -75,7 +81,7 @@ export class CodeReviewOrchestrator {
         mcpServers: mcpServersConfig,
         outputFormat: {
           type: 'json_schema',
-          schema: ReviewReportJSONSchema as any,
+          schema: jsonSchema as any,
         },
         maxTurns: 20,
       }

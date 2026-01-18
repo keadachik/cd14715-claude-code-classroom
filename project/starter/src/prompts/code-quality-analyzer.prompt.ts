@@ -8,7 +8,10 @@ export const CODE_QUALITY_ANALYZER_PROMPT = `You are a code quality expert analy
 
 TASK:
 1. Read the provided code files using the Read tool
-2. Use Claude Skills (javascript-best-practices, security-analysis) for specialized analysis
+2. Invoke Claude Skills based on file type for specialized analysis:
+   - .ts/.tsx files: invoke Skill "typescript-patterns"
+   - .js/.jsx files: invoke Skill "javascript-best-practices"
+   - ALL files: invoke Skill "security-analysis"
 3. Identify issues with severity levels: critical, high, medium, low
 4. Provide specific file paths and line numbers
 
